@@ -6,16 +6,11 @@ class WebCamVideoStream():
         (self.rate,self.frame)=self.stream.read()
         self.open=True
 
-    def update(self):
+    def read(self):
         if self.open:
             (self.rate,self.frame)=self.stream.read()
-            self.convertTomp4()
-            return self.read()
-
-    def read(self,stream):
-        self.update()
-        _,image=cv2.imencode(".jpg",self.frame)
-        return image
+            _,image=cv2.imencode(".jpg",self.frame)
+            return image
 
     def close(self):
         self.open=False
