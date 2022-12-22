@@ -27,7 +27,7 @@ async def camera(websocket: WebSocket):
         return {"msg":"Stream closed"}
 
 async def waitRes(websocket: WebSocket):
-    message=await websocket.receive()
+    message=await websocket.receive_text()
     if message=="Stop":
         stream.matched=False
     

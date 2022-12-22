@@ -6,10 +6,10 @@ class WebStream():
 
     async def camera(self,response):
         if not self.matched:
-            await response.send(b"Access denied")
+            await response.send_text("Access denied")
             return
         stream=WebCamVideoStream()
         while self.matched:
             image=stream.read()
-            await response.send(image.tobytes())
+            await response.send_bytes(image.tobytes())
         return "Stream Closed"
