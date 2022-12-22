@@ -10,13 +10,17 @@ class WebCamVideoStream():
         if self.open:
             (self.rate,self.frame)=self.stream.read()
             self.convertTomp4()
-            return (self,self.out.read())
+            return self.read()
 
-    def convertTomp4(self):
-        out_forurcc=cv2.VideoWriter_fourcc(*"mp4")
-        self.out=cv2.VideoWriter("./../cameraBuff/buff.mp4",out_forurcc,30,(640,480))
-        self.out.write(self.frame)
+    def read(self,stream):
+        self.update()
+        _,image=cv2.imencode(".jpg",self.frame)
+        return image
 
     def close(self):
         self.open=False
-        self.out.close()
+        self.stream.release()
+
+# def cameraControler():
+#     webCam=WebCamVideoStream()
+#     webCam
