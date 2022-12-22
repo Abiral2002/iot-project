@@ -21,7 +21,10 @@ def login(password:str):
 @app.websocket("/camera")
 async def camera(websocket: WebSocket):
     await waitRes(websocket)
-    await stream.camera(websocket)
+    closed=await stream.camera(websocket)
+    if closed:
+        websocket.close()
+        return {"msg":"Stream closed"}
 
 async def waitRes(websocket: WebSocket):
     message=await websocket.receive()
