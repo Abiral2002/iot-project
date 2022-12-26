@@ -1,15 +1,23 @@
 from .camera import WebCamVideoStream
+from fastapi import WebSocket
+import time
 
 class WebStream():
     def __init__(self):
         self.matched=True
 
-    async def camera(self,response):
+    async def camera(self,websocket:WebSocket):
         if not self.matched:
-            await response.send_text("Access denied")
+            await websocket.close(reason="Access denied")
             return
         stream=WebCamVideoStream()
-        while self.matched:
-            image=stream.read()
-            await response.send_bytes(image.tobytes())
-        return "Stream Closed"
+        await websocket.accept()
+        while True:
+            try:
+                image=stream.read()
+                time.sleep(0.01)
+                await websocket.send_bytes(image.tobytes())
+            except:
+                stream.close()
+                break
+        # print("Stream closed")
