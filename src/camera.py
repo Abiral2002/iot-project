@@ -3,12 +3,11 @@ import cv2
 class WebCamVideoStream():
     def __init__(self):
         self.stream=cv2.VideoCapture(0)
-        (self.rate,self.frame)=self.stream.read()
         self.open=True
 
     def read(self):
         if self.open:
-            (self.rate,self.frame)=self.stream.read()
+            self.rate,self.frame=self.stream.read()
             _,image=cv2.imencode(".jpg",self.frame)
             return image
 
