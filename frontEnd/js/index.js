@@ -75,7 +75,7 @@
   }
 
   function getting_data() {
-    const socket = new WebSocket("ws://raspberrypilocal:8000/camera");
+    const socket = new WebSocket("ws://raspberrypi.local:8000/camera");
 
     socket.onopen = function () {
       notification.innerText = "Connection established";
