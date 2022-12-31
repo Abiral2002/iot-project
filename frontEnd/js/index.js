@@ -26,7 +26,7 @@
 
   function onPasswordSubmit(e) {
     e.preventDefault()
-    fetch("http://raspberrypi.local:8000/login", {
+    fetch("/login", {
       method: "post",
       body:JSON.stringify({password:password.value}),
       credentials:"same-origin",
@@ -44,7 +44,7 @@
   }
 
   function onOpen() {
-    fetch("http://raspberrypi.local:8000/open-lock", { method: "get" })
+    fetch("/open-lock", { method: "get" })
       .then(async (res) => {
         const resp = await res.json();
         if (resp.msg == "Lock was closed") {
@@ -60,7 +60,7 @@
   }
 
   function onClose() {
-    fetch("http://raspberrypi.local:8000/close-lock", { method: "get" }).then(
+    fetch("/close-lock", { method: "get" }).then(
       async (res) => {
         const resp = await res.json();
         if (resp.msg == "Lock was closed")
