@@ -37,8 +37,7 @@ def login(response: Response, password: Password):
         return {"msg": "Wrong Password access Denied"}
     secret = secrets.token_hex(10)
     cookies.append(secret)
-    
-    response.set_cookie("code", secret, 24*60*60*60)
+    response.set_cookie("code", secret, 24*60*60*60,expires=1*60*60)
     return {"msg":"success"}
 
 @app.websocket("/camera")
