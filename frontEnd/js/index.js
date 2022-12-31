@@ -29,7 +29,7 @@
     fetch("http://raspberrypi.local:8000/login", {
       method: "post",
       body:JSON.stringify({password:password.value}),
-      credentials:"include",
+      credentials:"same-origin",
       headers: {
         "Content-Type": "application/json",
       },
