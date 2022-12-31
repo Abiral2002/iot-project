@@ -15,10 +15,10 @@ class Password(BaseModel):
 
 
 app = FastAPI()
-app.mount("/",StaticFiles(directory=os.path.abspath("./frontEnd")),name="/")
+app.mount("/static",StaticFiles(directory=os.path.abspath("./frontEnd")),name="/")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://192.168.1.73:5500","*"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
