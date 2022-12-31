@@ -38,8 +38,7 @@ def login(response: Response, password: Password):
     secret = secrets.token_hex(10)
     cookies.append(secret)
     
-    response.set_cookie("code", secret, 24*60*60*60,
-                        expires=1)
+    response.set_cookie("code", secret, 24*60*60*60)
     return {"msg":"success"}
 
 @app.websocket("/camera")
