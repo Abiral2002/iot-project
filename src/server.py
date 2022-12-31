@@ -7,6 +7,7 @@ import asyncio
 from collections import deque
 import secrets
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
 
 class Password(BaseModel):
     password: str
@@ -14,9 +15,10 @@ class Password(BaseModel):
 
 
 app = FastAPI()
+app.mount("/",StaticFiles(directory=os.path.abspath("./frontEnd")),name="/")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://192.168.1.73:5500"],
+    allow_origins=["http://192.168.1.73:5500","*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,10 +27,6 @@ connectedDevice= deque()
 stream = WebStream()
 motor = MotorController()
 cookies = []
-
-@app.get("/")
-def home():
-    return "Hello World"
 
 def runCamera(queue):
     stream.camera(queue)
