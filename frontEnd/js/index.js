@@ -12,28 +12,32 @@
   document.querySelector(".open-button").addEventListener("click", onOpen);
   document.querySelector(".close-button").addEventListener("click", onClose);
 
+  function screen_apper(){
+    lock_screen.style.display="none"
+    app_screen.style.display="flex"
+    notification.style.transform = "scaleY(1)";
+    notification.innerText = "Logged In";
+    setTimeout(() => (notification.style.transform = "scaleY(0)"), 5000);
+    status.innerText = "Open";
+    status.style.borderColor = styles.getPropertyValue("--open");
+    status.style.color = styles.getPropertyValue("--open");
+    getting_data();
+  }
+
   function onPasswordSubmit(e) {
     e.preventDefault()
     fetch("http://127.0.0.1:8000/login", {
       method: "post",
-      credentials:true,
       body:JSON.stringify({password:password.value}),
+      credentials:"include",
       headers: {
-        Accept: "application/json",
         "Content-Type": "application/json",
       },
     })
       .then(async (res) => {
         const resp = await res.json();
         if (resp.msg == "success") {
-          lock_screen.style.display="none"
-          app_screen.style.display="flex"
-          notification.style.transform = "scaleY(1)";
-          notification.innerText = "Logged In";
-          setTimeout(() => (notification.style.transform = "scaleY(0)"), 5000);
-          status.innerText = "Open";
-          status.style.borderColor = styles.getPropertyValue("--open");
-          status.style.color = styles.getPropertyValue("--open");
+          screen_apper()
         }
       })
       .catch(console.log);
@@ -106,5 +110,4 @@
 
     socket.send("Hello");
   }
-  getting_data();
 })();

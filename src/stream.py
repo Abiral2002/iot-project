@@ -1,6 +1,4 @@
 from .camera import WebCamVideoStream
-import multiprocessing as mp
-import time
 class WebStream():
     def __init__(self):
         self.matched=True

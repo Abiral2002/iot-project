@@ -3,26 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from .stream import WebStream
 from .motorController import MotorController
 import os
-from queue import Queue
 import asyncio
 from collections import deque
 import secrets
 from pydantic import BaseModel
-from concurrent.futures import ProcessPoolExecutor 
 
 class Password(BaseModel):
     password: str
 
 
-class Server():
-    def __init__(self):
-        self.connectedDevice = Queue()
-
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://127.0.0.1:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,20 +35,20 @@ def runCamera(queue):
 
 @app.post("/login")
 def login(response: Response, password: Password):
-    print(password)
     if password.password != open(os.path.join(os.getcwd(), "src/masterpassword.txt"), "r").read().strip():
         return {"msg": "Wrong Password access Denied"}
     secret = secrets.token_hex(10)
     cookies.append(secret)
     response.set_cookie("code", secret, 24*60*60*60,
                         expires=1, secure=True, httponly=True)
-    response.headers["Access-Control-Allow-Credentials"]="true"
-    # response.body.
     return {"msg":"success"}
 
 @app.websocket("/camera")
 async def camera(websocket: WebSocket):
-    if not websocket.cookies in cookies:
+    print()
+    print(websocket.cookies)
+    if not websocket.cookies["code"] in cookies:
+        print("Btt")
         return "Not logged in"
     await asyncio.sleep(0)
     await websocket.accept()
