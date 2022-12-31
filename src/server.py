@@ -45,24 +45,25 @@ def login(response: Response, password: Password):
 
 @app.websocket("/camera")
 async def camera(websocket: WebSocket):
-    print()
     print(websocket.cookies)
-    if not websocket.cookies["code"] in cookies:
-        print("Btt")
-        return "Not logged in"
-    await asyncio.sleep(0)
-    await websocket.accept()
-    connectedDevice.append(websocket)
-    while True:
+    try:
+        if not websocket.cookies["code"] in cookies:
+            return "Not logged in"
         await asyncio.sleep(0)
-        while connectedDevice:
-            try:
-                await asyncio.sleep(0)
-                sock=connectedDevice.popleft()
-                await sock.send_bytes(stream.camera())
-                connectedDevice.append(sock)
-            except:
-                pass
+        await websocket.accept()
+        connectedDevice.append(websocket)
+        while True:
+            await asyncio.sleep(0)
+            while connectedDevice:
+                try:
+                    await asyncio.sleep(0)
+                    sock=connectedDevice.popleft()
+                    await sock.send_bytes(stream.camera())
+                    connectedDevice.append(sock)
+                except:
+                    pass
+    except KeyError:
+        return {"msg":"No cookie found"}
 
 
 @app.get("/open-lock")

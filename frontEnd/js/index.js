@@ -26,7 +26,7 @@
 
   function onPasswordSubmit(e) {
     e.preventDefault()
-    fetch("http://127.0.0.1:8000/login", {
+    fetch("http://raspberrypi.local:8000/login", {
       method: "post",
       body:JSON.stringify({password:password.value}),
       credentials:"include",
@@ -44,7 +44,7 @@
   }
 
   function onOpen() {
-    fetch("http://127.0.0.1:8000/open-lock", { method: "get" })
+    fetch("http://raspberrypi.local:8000/open-lock", { method: "get" })
       .then(async (res) => {
         const resp = await res.json();
         if (resp.msg == "Lock was closed") {
@@ -60,7 +60,7 @@
   }
 
   function onClose() {
-    fetch("http://127.0.0.1:8000/close-lock", { method: "get" }).then(
+    fetch("http://raspberrypi.local:8000/close-lock", { method: "get" }).then(
       async (res) => {
         const resp = await res.json();
         if (resp.msg == "Lock was closed")
@@ -75,7 +75,7 @@
   }
 
   function getting_data() {
-    const socket = new WebSocket("ws://127.0.0.1:8000/camera");
+    const socket = new WebSocket("ws://raspberrypi.local:8000/camera");
 
     socket.onopen = function () {
       notification.innerText = "Connection established";
