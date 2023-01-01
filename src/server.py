@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, Response
+from fastapi import FastAPI, WebSocket, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from .stream import WebStream
 from .motorController import MotorController
@@ -9,13 +9,13 @@ import secrets
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 
+
 class Password(BaseModel):
     password: str
 
 
-
 app = FastAPI()
-app.mount("/static",StaticFiles(directory=os.path.abspath("./frontEnd")),name="/")
+app.mount("/static", StaticFiles(directory=os.path.abspath("./frontEnd")), name="/")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,13 +23,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-connectedDevice= deque()
+connectedDevice = deque()
 stream = WebStream()
 motor = MotorController()
 cookies = []
 
+
 def runCamera(queue):
     stream.camera(queue)
+
+
+def authenticate(req):
+    try:
+        if req.cookies["code"] in cookies:
+            return True
+        else:
+            return False
+    except:
+        return False
+
 
 @app.post("/login")
 def login(response: Response, password: Password):
@@ -37,34 +49,36 @@ def login(response: Response, password: Password):
         return {"msg": "Wrong Password access Denied"}
     secret = secrets.token_hex(10)
     cookies.append(secret)
-    response.set_cookie("code", secret, 24*60*60*60,expires=1*60*60)
-    return {"msg":"success"}
+    response.set_cookie("code", secret, 24*60*60*60, expires=1*60*60)
+    return {"msg": "success"}
+
 
 @app.websocket("/camera")
 async def camera(websocket: WebSocket):
-    print(websocket.cookies)
-    try:
-        if not websocket.cookies["code"] in cookies:
-            return "Not logged in"
+    print("NO ")
+
+    if not authenticate(websocket):
+        return {"msg": "Login First"}
+    await asyncio.sleep(0)
+    await websocket.accept()
+    connectedDevice.append(websocket)
+    while True:
         await asyncio.sleep(0)
-        await websocket.accept()
-        connectedDevice.append(websocket)
-        while True:
-            await asyncio.sleep(0)
-            while connectedDevice:
-                try:
-                    await asyncio.sleep(0)
-                    sock=connectedDevice.popleft()
-                    await sock.send_bytes(stream.camera())
-                    connectedDevice.append(sock)
-                except:
-                    pass
-    except KeyError:
-        return {"msg":"No cookie found"}
+        while connectedDevice:
+            try:
+                await asyncio.sleep(0)
+                sock = connectedDevice.popleft()
+                await sock.send_bytes(stream.camera())
+                connectedDevice.append(sock)
+            except:
+                pass
 
 
 @app.get("/open-lock")
-def open_lock():
+def open_lock(req: Request):
+    if not authenticate(req):
+        return {"msg": "Login First"}
+
     if not motor.isOpen:
         motor.open()
         return {"msg": "Lock opened"}
@@ -72,7 +86,20 @@ def open_lock():
 
 
 @app.get("/close-lock")
-def close_lock():
+def close_lock(req: Request):
+    if not authenticate(req):
+        return {"msg": "Login First"}
+
+    if motor.isOpen:
+        motor.close()
+        return {"msg": "Lock closed"}
+    return {"msg": "Lock was closed"}
+
+
+@app.get("/lock-status")
+def close_lock(req: Request):
+    if not authenticate(req):
+        return {"msg": "Login First"}
     if motor.isOpen:
         motor.close()
         return {"msg": "Lock closed"}
@@ -80,7 +107,9 @@ def close_lock():
 
 
 @app.get("/status")
-def status():
+def status(req: Request):
+    if not authenticate(req):
+        return {"msg": "Login First"}
     if motor.isOpen:
         return {"msg": "Open"}
     else:

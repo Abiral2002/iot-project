@@ -1,7 +1,7 @@
 # Code for motor
 class MotorController:
     def __init__(self) -> None:
-        self.isOpen=True
+        self.isOpen=False
 
     def open(self):
         self.isOpen=True
