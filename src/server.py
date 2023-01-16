@@ -42,7 +42,6 @@ def authenticate(req):
     except:
         return False
 
-
 @app.post("/login")
 def login(response: Response, password: Password):
     if password.password != open(os.path.join(os.getcwd(), "src/masterpassword.txt"), "r").read().strip():
@@ -114,3 +113,7 @@ def status(req: Request):
         return {"msg": "Open"}
     else:
         return {"msg": "closed"}
+
+@app.on_event("shutdown")
+def shutdown_event():
+    motor.close()
