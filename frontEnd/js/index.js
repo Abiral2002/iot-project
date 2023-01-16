@@ -24,7 +24,7 @@
     status.style.borderColor = styles.getPropertyValue("--open");
     status.style.color = styles.getPropertyValue("--open");
     fetch("/status", { method: "get" }).then(async (req) => {
-      let requ = req.json();
+      let requ = await req.json();
       if (requ.msg == "Open") {
         status.innerText = "Open";
 
@@ -98,7 +98,7 @@
   }
 
   function getting_data() {
-    const socket = new WebSocket("ws://raspberrypi.local:8000/camera");
+    const socket = new WebSocket("ws://192.168.1.74:8000/camera");
 
     socket.onopen = function () {
       notification.innerText = "Connection established";
