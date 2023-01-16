@@ -117,3 +117,4 @@ def status(req: Request):
 @app.on_event("shutdown")
 def shutdown_event():
     motor.close()
+    motor.flush()

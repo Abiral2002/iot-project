@@ -9,10 +9,11 @@ class MotorController:
         self.time=2
         self.OPEN=5
         self.CLOSE=7
+        self.flush=lambda : GPIO.cleanup() 
 
     def open(self):
         self.isOpen=True
-        GPIO.setout(self.OPEN,GPIO.OUT)
+        GPIO.setup(self.OPEN,GPIO.OUT)
         GPIO.output(self.OPEN,True)
         sleep(self.time)
         GPIO.output(self.OPEN,False)
@@ -20,7 +21,7 @@ class MotorController:
 
     def close(self):
         self.isOpen=False
-        GPIO.setout(self.CLOSE,GPIO.OUT)
+        GPIO.setup(self.CLOSE,GPIO.OUT)
         GPIO.output(self.CLOSE,True)
         sleep(self.time)
         GPIO.output(self.CLOSE,False)
