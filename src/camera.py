@@ -14,7 +14,3 @@ class WebCamVideoStream():
     def close(self):
         self.open=False
         self.stream.release()
-
-# def cameraControler():
-#     webCam=WebCamVideoStream()
-#     webCam

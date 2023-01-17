@@ -4,6 +4,7 @@ from .stream import WebStream
 from .motorController import MotorController
 import os
 import asyncio
+import requests
 from collections import deque
 import secrets
 from pydantic import BaseModel
@@ -80,6 +81,7 @@ def open_lock(req: Request):
 
     if not motor.isOpen:
         motor.open()
+        requests.get(url="https://auth.nestsms.com/smsapi/index.php",params="key=362886F4830A64&campaign=6544&routeid=116&type=text&contacts=9842882495,9846801737,9745978771,9812362596&senderid=NEST_Alert&msg=Dear+Owner%2C+Your+Door+was+opened")
         return {"msg": "Lock opened"}
     return {"msg": "Lock was opened"}
 
@@ -88,7 +90,6 @@ def open_lock(req: Request):
 def close_lock(req: Request):
     if not authenticate(req):
         return {"msg": "Login First"}
-
     if motor.isOpen:
         motor.close()
         return {"msg": "Lock closed"}
@@ -96,7 +97,7 @@ def close_lock(req: Request):
 
 
 @app.get("/lock-status")
-def close_lock(req: Request):
+def status(req: Request):
     if not authenticate(req):
         return {"msg": "Login First"}
     if motor.isOpen:
