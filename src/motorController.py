@@ -7,7 +7,7 @@ class MotorController:
     def __init__(self) -> None:
         self.isOpen=False
         self.PIN=11
-        GPIO.setup(self.OPEN,GPIO.OUT)
+        GPIO.setup(self.PIN,GPIO.OUT)
         self.servo=GPIO.PWM(11,50)
         self.servo.start(0)
         self.servo.ChangeDutyCycle(6.5)
