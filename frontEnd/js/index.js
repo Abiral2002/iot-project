@@ -3,6 +3,7 @@
   const app_screen = document.querySelector(".app");
   const lock_screen = document.querySelector(".login");
   const notification = document.querySelector(".notification");
+  const login_not=document.querySelector("#login_notification")
   const status = document.querySelector(".status");
   const password = document.querySelector(".password");
   const styles = getComputedStyle(document.documentElement);
@@ -10,7 +11,7 @@
   const close = document.querySelector(".close-button");
   document
     .querySelector(".password-submit")
-    .addEventListener("click", onPasswordSubmit);
+    .addEventListener("click",onPasswordSubmit);
   open.addEventListener("click", onOpen);
   close.addEventListener("click", onClose);
 
@@ -41,6 +42,10 @@
 
   function onPasswordSubmit(e) {
     e.preventDefault();
+    e.target.disabled=true
+    login_not.innerText = "Logging In";
+    login_not.style.transform = "scaleY(1)";
+    
     fetch("/login", {
       method: "post",
       body: JSON.stringify({ password: password.value }),
@@ -50,12 +55,20 @@
       },
     })
       .then(async (res) => {
+        e.target.disabled=false
         const resp = await res.json();
         if (resp.msg == "success") {
           screen_apper();
         }
+        else{
+          login_not.innerText="Incorrect Password"
+        }
+        setTimeout(() => login_not.style.transform = "scaleY(0)", 3000);
       })
-      .catch(console.log);
+      .catch((e)=>{
+        login_not.innerText="Error try again"
+        setTimeout(() => login_not.style.transform = "scaleY(0)", 3000);
+      });
   }
 
   function onOpen() {
