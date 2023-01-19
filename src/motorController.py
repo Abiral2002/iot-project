@@ -15,7 +15,7 @@ class MotorController:
 
     def open(self):
         self.isOpen=True
-        self.servo.ChangeDutyCycle(12)
+        self.servo.ChangeDutyCycle(2)
         self.servo.start(0)
         return
 
