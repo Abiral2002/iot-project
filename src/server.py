@@ -5,6 +5,7 @@ from .motorController import MotorController
 import os
 import asyncio
 import requests
+from .detection import compare_face
 from collections import deque
 import time
 import secrets
@@ -76,14 +77,17 @@ async def camera(websocket: WebSocket):
 
 
 @app.get("/open-lock")
-def open_lock(req: Request):
+def open_lock(req: Request,res:Response):
     if not authenticate(req):
         return {"msg": "Login First"}
-
     if not motor.isOpen:
-        motor.open()
-        requests.get(url="https://auth.nestsms.com/smsapi/index.php",params=f"key=362886F4830A64&campaign=6544&routeid=116&type=text&contacts=9842882495,9846801737,9745978771,9812362596&senderid=NEST_Alert&msg=Dear+Owner%2C+Your+Door+was+opened on {time.ctime()}")
-        return {"msg": "Lock opened"}
+        if(compare_face()):
+            motor.open()
+            requests.get(url="https://auth.nestsms.com/smsapi/index.php",params=f"key=362886F4830A64&campaign=6544&routeid=116&type=text&contacts=9842882495,9846801737,9745978771,9812362596&senderid=NEST_Alert&msg=Dear+Owner%2C+Your+Door+was+opened on {time.ctime()}")
+            return {"msg": "Lock opened"}
+        else:
+            res.status_code=400
+            return {"msg": "FaceId doesn't match"}
     return {"msg": "Lock was opened"}
 
 
@@ -96,9 +100,8 @@ def close_lock(req: Request):
         return {"msg": "Lock closed"}
     return {"msg": "Lock was closed"}
 
-
 @app.get("/lock-status")
-def status(req: Request):
+def status(req: Request,res:Response):
     if not authenticate(req):
         return {"msg": "Login First"}
     if motor.isOpen:

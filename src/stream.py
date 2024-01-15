@@ -1,5 +1,6 @@
 from .camera import WebCamVideoStream
 class WebStream():
+
     def __init__(self):
         self.matched=True
         self.cam=WebCamVideoStream()

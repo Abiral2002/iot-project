@@ -15,6 +15,11 @@
   open.addEventListener("click", onOpen);
   close.addEventListener("click", onClose);
 
+  function register_user(){
+
+  }
+
+  
   function screen_apper() {
     lock_screen.style.display = "none";
     app_screen.style.display = "flex";
@@ -76,15 +81,16 @@
     fetch("/open-lock", { method: "get" })
       .then(async (res) => {
         const resp = await res.json();
-        notification.innerText = "Door unlocked";
+        if(res.status==400)
+          notification.innerText = "FaceId donot match";
+        else
+          notification.innerText = "Door unlocked";
         open.disabled = false;
-        if (resp.msg == "Lock opened") {
           notification.style.transform = "scaleY(1)";
           setTimeout(() => (notification.style.transform = "scaleY(0)"), 5000);
           status.innerText = "Open";
           status.style.borderColor = styles.getPropertyValue("--open");
           status.style.color = styles.getPropertyValue("--open");
-        }
       })
       .catch(() => {
         open.disabled = false;
@@ -111,7 +117,7 @@
   }
 
   function getting_data() {
-    const socket = new WebSocket("ws://raspberrypi.local:8000/camera");
+    const socket = new WebSocket("ws://127.0.0.1:4000/camera");
 
     socket.onopen = function () {
       notification.innerText = "Connection established";
