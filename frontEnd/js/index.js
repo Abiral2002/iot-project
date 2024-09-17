@@ -81,16 +81,18 @@
     fetch("/open-lock", { method: "get" })
       .then(async (res) => {
         const resp = await res.json();
-        if(res.status==400)
+        if(res.status==400){
           notification.innerText = "FaceId donot match";
-        else
+        }
+        else{
           notification.innerText = "Door unlocked";
-        open.disabled = false;
-          notification.style.transform = "scaleY(1)";
-          setTimeout(() => (notification.style.transform = "scaleY(0)"), 5000);
           status.innerText = "Open";
           status.style.borderColor = styles.getPropertyValue("--open");
           status.style.color = styles.getPropertyValue("--open");
+        }
+          open.disabled = false;
+          notification.style.transform = "scaleY(1)";
+          setTimeout(() => (notification.style.transform = "scaleY(0)"), 5000);
       })
       .catch(() => {
         open.disabled = false;
@@ -117,7 +119,7 @@
   }
 
   function getting_data() {
-    const socket = new WebSocket("ws://127.0.0.1:4000/camera");
+    const socket = new WebSocket("ws://192.168.1.69:4000/camera");
 
     socket.onopen = function () {
       notification.innerText = "Connection established";

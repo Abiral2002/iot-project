@@ -34,7 +34,7 @@ def load_authorized_encoding(encoding_file_path):
         return []
 
 def save_encoding(authorized_encodings):
-    with open("/Users/abirallamsal/ai/users.txt", 'wb') as file:
+    with open("/Users/abirallamsal/prac/users.txt", 'wb') as file:
         pickle.dump(authorized_encodings,file)
 
 def take_register_user():
@@ -48,11 +48,11 @@ def take_register_user():
 
 def compare_face():
     stream=WebCamVideoStream()    
-    authorized_encoding=load_authorized_encoding("/Users/abirallamsal/ai/users.txt")
+    authorized_encoding=load_authorized_encoding("/Users/abirallamsal/prac/users.txt")
     rgb_frame = cv2.cvtColor(stream.read_frame(), cv2.COLOR_BGR2RGB)
     return compare_encoding(rgb_frame,authorized_encoding)
 
 
 if __name__=="__main__":
     from camera import WebCamVideoStream
-    print(take_register_user())
+    take_register_user()
